@@ -1,0 +1,208 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3A649F1D150AE5A3002AA2F6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A649F1C150AE5A3002AA2F6 /* main.cpp */; };
+		3A649F1F150AE5A3002AA2F6 /* ATShader.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A649F1E150AE5A3002AA2F6 /* ATShader.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3A649F16150AE5A3002AA2F6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				3A649F1F150AE5A3002AA2F6 /* ATShader.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3A649F18150AE5A3002AA2F6 /* ATShader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ATShader; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A649F1C150AE5A3002AA2F6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		3A649F1E150AE5A3002AA2F6 /* ATShader.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ATShader.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3A649F15150AE5A3002AA2F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3A649F0D150AE5A2002AA2F6 = {
+			isa = PBXGroup;
+			children = (
+				3A649F1B150AE5A3002AA2F6 /* ATShader */,
+				3A649F19150AE5A3002AA2F6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3A649F19150AE5A3002AA2F6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3A649F18150AE5A3002AA2F6 /* ATShader */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3A649F1B150AE5A3002AA2F6 /* ATShader */ = {
+			isa = PBXGroup;
+			children = (
+				3A649F1C150AE5A3002AA2F6 /* main.cpp */,
+				3A649F1E150AE5A3002AA2F6 /* ATShader.1 */,
+			);
+			path = ATShader;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A649F17150AE5A3002AA2F6 /* ATShader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A649F22150AE5A3002AA2F6 /* Build configuration list for PBXNativeTarget "ATShader" */;
+			buildPhases = (
+				3A649F14150AE5A3002AA2F6 /* Sources */,
+				3A649F15150AE5A3002AA2F6 /* Frameworks */,
+				3A649F16150AE5A3002AA2F6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ATShader;
+			productName = ATShader;
+			productReference = 3A649F18150AE5A3002AA2F6 /* ATShader */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3A649F0F150AE5A2002AA2F6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Apple Inc.";
+			};
+			buildConfigurationList = 3A649F12150AE5A2002AA2F6 /* Build configuration list for PBXProject "ATShader" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3A649F0D150AE5A2002AA2F6;
+			productRefGroup = 3A649F19150AE5A3002AA2F6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3A649F17150AE5A3002AA2F6 /* ATShader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3A649F14150AE5A3002AA2F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A649F1D150AE5A3002AA2F6 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3A649F20150AE5A3002AA2F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3A649F21150AE5A3002AA2F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3A649F23150AE5A3002AA2F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3A649F24150AE5A3002AA2F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3A649F12150AE5A2002AA2F6 /* Build configuration list for PBXProject "ATShader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A649F20150AE5A3002AA2F6 /* Debug */,
+				3A649F21150AE5A3002AA2F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3A649F22150AE5A3002AA2F6 /* Build configuration list for PBXNativeTarget "ATShader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A649F23150AE5A3002AA2F6 /* Debug */,
+				3A649F24150AE5A3002AA2F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3A649F0F150AE5A2002AA2F6 /* Project object */;
+}
