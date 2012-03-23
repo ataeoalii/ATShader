@@ -40,7 +40,6 @@ int main (int argc, const char * argv[])
     // read in scene file
     scene.sceneReaderPhong(filename);
     
-    ATTriangle att = scene.getObjects()[0].triangles[0];
     cout << scene.getObjects()[0].triangles.size() << endl;
     cout << "triangle size" << endl;
     
@@ -53,7 +52,7 @@ int main (int argc, const char * argv[])
 //                                 0.0f, 0.0f, 0.0f, 1.0f);
     
     // get modelview matrix
-    modelViewMatrix = scene.camera;
+    modelViewMatrix = scene.getObjects()[0].modelView;
     
 //    modelViewMatrix = ATMatrix4(1.0f, 0.0f, 0.0f, 0.0f,
 //                                 1.0f, 0.0f, 0.0f, 0.0f,
@@ -184,31 +183,30 @@ void ApplicationDisplay(void)
     
     ATMatrix4 atm = ATMatrix4::ConcatMatrices(projectionMatrix, modelViewMatrix);
     
-    float *geometry = new float[12*triangles.size()];
-    
-    for(unsigned int i=0; i<triangles.size(); i++)
+    float geometry[12*triangles.size()];
+    int idx = 0;
+    for(unsigned int i=0; i<2; i++)
     {
-        geometry[i]    = triangles[i].vertA.getX();
-        geometry[i+1]  = triangles[i].vertA.getY();
-        geometry[i+2]  = triangles[i].vertA.getZ();
-        geometry[i+3]  = 1.0f;
+        geometry[idx++]  = triangles[i].vertA.getX();
+        geometry[idx++]  = triangles[i].vertA.getY();
+        geometry[idx++]  = triangles[i].vertA.getZ();
+        geometry[idx++]  = 1.0f;
         
-        geometry[i+4]  = triangles[i].vertB.getX();
-        geometry[i+5]  = triangles[i].vertB.getY();
-        geometry[i+6]  = triangles[i].vertB.getZ();
-        geometry[i+7]  = 1.0f;
+        geometry[idx++]  = triangles[i].vertB.getX();
+        geometry[idx++]  = triangles[i].vertB.getY();
+        geometry[idx++]  = triangles[i].vertB.getZ();
+        geometry[idx++]  = 1.0f;
         
-        geometry[i+8]  = triangles[i].vertC.getX();
-        geometry[i+9]  = triangles[i].vertC.getY();
-        geometry[i+10] = triangles[i].vertC.getZ();
-        geometry[i+11] = 1.0f;
+        geometry[idx++]  = triangles[i].vertC.getX();
+        geometry[idx++]  = triangles[i].vertC.getY();
+        geometry[idx++]  = triangles[i].vertC.getZ();
+        geometry[idx++]  = 1.0f;
         
     }
     
-    
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, geometry);
     glEnableVertexAttribArray(0);
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(triangles.size()*3));
+    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*triangles.size()));
     
     
     glutSwapBuffers();
