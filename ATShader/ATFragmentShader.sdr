@@ -1,0 +1,19 @@
+uniform vec4 color;
+uniform vec4 eyeLightPosition;
+
+varying vec4 eyePosition;
+varying vec3 eyeNormal;
+
+uniform vec4 lightAmbient;
+
+void main(void)
+{
+    //vec4 ambient = lightAmbient * color;
+
+    //vec3 incident = vec3(normalize(eyeLightPosition - eyeLightPosition));
+    //float incidence = max(0.0, dot(incident, eyeNormal));
+
+    //vec4 diffuse = color * incidence;
+
+    gl_FragColor = color;
+}

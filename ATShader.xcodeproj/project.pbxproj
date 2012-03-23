@@ -7,8 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A20809A150DAE9F0024103C /* ATMatrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A208086150DAE9F0024103C /* ATMatrix4.cpp */; };
+		3A20809C150DAE9F0024103C /* ATScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A20808A150DAE9F0024103C /* ATScene.cpp */; };
+		3A20809D150DAE9F0024103C /* ATTextureMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A20808C150DAE9F0024103C /* ATTextureMap.cpp */; };
+		3A20809E150DAE9F0024103C /* ATTransformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A20808E150DAE9F0024103C /* ATTransformation.cpp */; };
+		3A20809F150DAE9F0024103C /* ATTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A208090150DAE9F0024103C /* ATTriangle.cpp */; };
+		3A2080A0150DAE9F0024103C /* ATTriangleGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A208092150DAE9F0024103C /* ATTriangleGroup.cpp */; };
+		3A2080A1150DAE9F0024103C /* ATVector2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A208094150DAE9F0024103C /* ATVector2D.cpp */; };
+		3A2080A2150DAE9F0024103C /* ATVector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A208096150DAE9F0024103C /* ATVector3D.cpp */; };
+		3A2080A3150DAE9F0024103C /* ATVector4D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A208098150DAE9F0024103C /* ATVector4D.cpp */; };
 		3A649F1D150AE5A3002AA2F6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A649F1C150AE5A3002AA2F6 /* main.cpp */; };
-		3A649F1F150AE5A3002AA2F6 /* ATShader.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A649F1E150AE5A3002AA2F6 /* ATShader.1 */; };
+		3A649F26150AE5CF002AA2F6 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A649F25150AE5CF002AA2F6 /* GLUT.framework */; };
+		3A649F28150AE5DB002AA2F6 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A649F27150AE5DB002AA2F6 /* OpenGL.framework */; };
+		3A649F2B150B01B2002AA2F6 /* ATVertexShader.sdr in Sources */ = {isa = PBXBuildFile; fileRef = 3A649F2A150B01B2002AA2F6 /* ATVertexShader.sdr */; };
+		3A649F2D150B01C1002AA2F6 /* ATFragmentShader.sdr in Sources */ = {isa = PBXBuildFile; fileRef = 3A649F2C150B01C1002AA2F6 /* ATFragmentShader.sdr */; };
+		3A7E2D281511398400280E46 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A7E2D271511398400280E46 /* CoreFoundation.framework */; };
+		3AB1CAD9150FAA6E000FCE4E /* ATColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CAD8150FAA6E000FCE4E /* ATColor.cpp */; };
+		3AB1CADE150FAAF7000FCE4E /* ATLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CADC150FAAF7000FCE4E /* ATLight.cpp */; };
+		3AB1CAE4150FB78A000FCE4E /* ATRaster3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CAE3150FB78A000FCE4E /* ATRaster3D.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,16 +34,43 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				3A649F1F150AE5A3002AA2F6 /* ATShader.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3A208086150DAE9F0024103C /* ATMatrix4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATMatrix4.cpp; sourceTree = "<group>"; };
+		3A208087150DAE9F0024103C /* ATMatrix4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATMatrix4.h; sourceTree = "<group>"; };
+		3A20808A150DAE9F0024103C /* ATScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATScene.cpp; sourceTree = "<group>"; };
+		3A20808B150DAE9F0024103C /* ATScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATScene.h; sourceTree = "<group>"; };
+		3A20808C150DAE9F0024103C /* ATTextureMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATTextureMap.cpp; sourceTree = "<group>"; };
+		3A20808D150DAE9F0024103C /* ATTextureMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATTextureMap.h; sourceTree = "<group>"; };
+		3A20808E150DAE9F0024103C /* ATTransformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATTransformation.cpp; sourceTree = "<group>"; };
+		3A20808F150DAE9F0024103C /* ATTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATTransformation.h; sourceTree = "<group>"; };
+		3A208090150DAE9F0024103C /* ATTriangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATTriangle.cpp; sourceTree = "<group>"; };
+		3A208091150DAE9F0024103C /* ATTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATTriangle.h; sourceTree = "<group>"; };
+		3A208092150DAE9F0024103C /* ATTriangleGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATTriangleGroup.cpp; sourceTree = "<group>"; };
+		3A208093150DAE9F0024103C /* ATTriangleGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATTriangleGroup.h; sourceTree = "<group>"; };
+		3A208094150DAE9F0024103C /* ATVector2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATVector2D.cpp; sourceTree = "<group>"; };
+		3A208095150DAE9F0024103C /* ATVector2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATVector2D.h; sourceTree = "<group>"; };
+		3A208096150DAE9F0024103C /* ATVector3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATVector3D.cpp; sourceTree = "<group>"; };
+		3A208097150DAE9F0024103C /* ATVector3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATVector3D.h; sourceTree = "<group>"; };
+		3A208098150DAE9F0024103C /* ATVector4D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATVector4D.cpp; sourceTree = "<group>"; };
+		3A208099150DAE9F0024103C /* ATVector4D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATVector4D.h; sourceTree = "<group>"; };
 		3A649F18150AE5A3002AA2F6 /* ATShader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ATShader; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A649F1C150AE5A3002AA2F6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		3A649F1E150AE5A3002AA2F6 /* ATShader.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ATShader.1; sourceTree = "<group>"; };
+		3A649F25150AE5CF002AA2F6 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		3A649F27150AE5DB002AA2F6 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		3A649F2A150B01B2002AA2F6 /* ATVertexShader.sdr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ATVertexShader.sdr; sourceTree = "<group>"; };
+		3A649F2C150B01C1002AA2F6 /* ATFragmentShader.sdr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ATFragmentShader.sdr; sourceTree = "<group>"; };
+		3A7E2D271511398400280E46 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		3AB1CAD8150FAA6E000FCE4E /* ATColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATColor.cpp; sourceTree = "<group>"; };
+		3AB1CADB150FAA78000FCE4E /* ATColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATColor.h; sourceTree = "<group>"; };
+		3AB1CADC150FAAF7000FCE4E /* ATLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATLight.cpp; sourceTree = "<group>"; };
+		3AB1CADD150FAAF7000FCE4E /* ATLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLight.h; sourceTree = "<group>"; };
+		3AB1CAE3150FB78A000FCE4E /* ATRaster3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATRaster3D.cpp; sourceTree = "<group>"; };
+		3AB1CAE5150FB794000FCE4E /* ATRaster3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATRaster3D.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +78,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A7E2D281511398400280E46 /* CoreFoundation.framework in Frameworks */,
+				3A649F28150AE5DB002AA2F6 /* OpenGL.framework in Frameworks */,
+				3A649F26150AE5CF002AA2F6 /* GLUT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +90,7 @@
 		3A649F0D150AE5A2002AA2F6 = {
 			isa = PBXGroup;
 			children = (
+				3A649F29150AE5F5002AA2F6 /* Frameworks */,
 				3A649F1B150AE5A3002AA2F6 /* ATShader */,
 				3A649F19150AE5A3002AA2F6 /* Products */,
 			);
@@ -61,9 +108,60 @@
 			isa = PBXGroup;
 			children = (
 				3A649F1C150AE5A3002AA2F6 /* main.cpp */,
-				3A649F1E150AE5A3002AA2F6 /* ATShader.1 */,
+				3AB1CAE0150FAF2A000FCE4E /* implementation */,
+				3AB1CADF150FAF13000FCE4E /* includes */,
+				3A649F2A150B01B2002AA2F6 /* ATVertexShader.sdr */,
+				3A649F2C150B01C1002AA2F6 /* ATFragmentShader.sdr */,
 			);
 			path = ATShader;
+			sourceTree = "<group>";
+		};
+		3A649F29150AE5F5002AA2F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3A7E2D271511398400280E46 /* CoreFoundation.framework */,
+				3A649F27150AE5DB002AA2F6 /* OpenGL.framework */,
+				3A649F25150AE5CF002AA2F6 /* GLUT.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3AB1CADF150FAF13000FCE4E /* includes */ = {
+			isa = PBXGroup;
+			children = (
+				3AB1CAE5150FB794000FCE4E /* ATRaster3D.h */,
+				3AB1CADB150FAA78000FCE4E /* ATColor.h */,
+				3AB1CADD150FAAF7000FCE4E /* ATLight.h */,
+				3A208087150DAE9F0024103C /* ATMatrix4.h */,
+				3A20808B150DAE9F0024103C /* ATScene.h */,
+				3A20808D150DAE9F0024103C /* ATTextureMap.h */,
+				3A20808F150DAE9F0024103C /* ATTransformation.h */,
+				3A208091150DAE9F0024103C /* ATTriangle.h */,
+				3A208093150DAE9F0024103C /* ATTriangleGroup.h */,
+				3A208095150DAE9F0024103C /* ATVector2D.h */,
+				3A208097150DAE9F0024103C /* ATVector3D.h */,
+				3A208099150DAE9F0024103C /* ATVector4D.h */,
+			);
+			name = includes;
+			sourceTree = "<group>";
+		};
+		3AB1CAE0150FAF2A000FCE4E /* implementation */ = {
+			isa = PBXGroup;
+			children = (
+				3AB1CAE3150FB78A000FCE4E /* ATRaster3D.cpp */,
+				3AB1CAD8150FAA6E000FCE4E /* ATColor.cpp */,
+				3AB1CADC150FAAF7000FCE4E /* ATLight.cpp */,
+				3A208086150DAE9F0024103C /* ATMatrix4.cpp */,
+				3A20808A150DAE9F0024103C /* ATScene.cpp */,
+				3A20808C150DAE9F0024103C /* ATTextureMap.cpp */,
+				3A20808E150DAE9F0024103C /* ATTransformation.cpp */,
+				3A208090150DAE9F0024103C /* ATTriangle.cpp */,
+				3A208092150DAE9F0024103C /* ATTriangleGroup.cpp */,
+				3A208094150DAE9F0024103C /* ATVector2D.cpp */,
+				3A208096150DAE9F0024103C /* ATVector3D.cpp */,
+				3A208098150DAE9F0024103C /* ATVector4D.cpp */,
+			);
+			name = implementation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -117,6 +215,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A649F1D150AE5A3002AA2F6 /* main.cpp in Sources */,
+				3A649F2B150B01B2002AA2F6 /* ATVertexShader.sdr in Sources */,
+				3A649F2D150B01C1002AA2F6 /* ATFragmentShader.sdr in Sources */,
+				3A20809A150DAE9F0024103C /* ATMatrix4.cpp in Sources */,
+				3A20809C150DAE9F0024103C /* ATScene.cpp in Sources */,
+				3A20809D150DAE9F0024103C /* ATTextureMap.cpp in Sources */,
+				3A20809E150DAE9F0024103C /* ATTransformation.cpp in Sources */,
+				3A20809F150DAE9F0024103C /* ATTriangle.cpp in Sources */,
+				3A2080A0150DAE9F0024103C /* ATTriangleGroup.cpp in Sources */,
+				3A2080A1150DAE9F0024103C /* ATVector2D.cpp in Sources */,
+				3A2080A2150DAE9F0024103C /* ATVector3D.cpp in Sources */,
+				3A2080A3150DAE9F0024103C /* ATVector4D.cpp in Sources */,
+				3AB1CAD9150FAA6E000FCE4E /* ATColor.cpp in Sources */,
+				3AB1CADE150FAAF7000FCE4E /* ATLight.cpp in Sources */,
+				3AB1CAE4150FB78A000FCE4E /* ATRaster3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,7 +244,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -201,6 +313,7 @@
 				3A649F24150AE5A3002AA2F6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
