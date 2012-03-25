@@ -8,6 +8,8 @@
 
 using namespace std;
 
+const char* FILEPREFIX = "../../../../../";
+
 ATScene::ATScene()
 {
 }
@@ -78,7 +80,7 @@ void ATScene::splitString(string line, string retVals[], unsigned int count)
  * Creates a vector of ATVector3Ds from the RAW file so they
  * can have all the transformations applied to each one of them.
  */
-vector<ATVector4D> ATScene::createVectors(char allCharsFromFile[], unsigned int count, float* totalX, float* totalY, int* numVals)
+vector<ATVector4D> ATScene::createVectors(char allCharsFromFile[], unsigned long count, float* totalX, float* totalY, int* numVals)
 {
 	vector<ATVector4D> atvs;
 	unsigned int idx = 0;
@@ -155,7 +157,7 @@ ATTriangleGroup ATScene::readRawFile( string filename, float* totalX, float* tot
 {
 	ATTriangleGroup temptriangles(true);
 	ATVector3D v1, v2, v3;
-	int length;
+	long length;
     cout << "Reading Triangle data from " << filename << "\n";
     ifstream rawFile(filename.c_str());
     if(!rawFile)
@@ -175,6 +177,7 @@ ATTriangleGroup ATScene::readRawFile( string filename, float* totalX, float* tot
         // create all vectors from the file
         vector<ATVector4D> atvs = createVectors(allCharsFromFile, length, totalX, totalY, numVals);
         
+        delete allCharsFromFile;
         // use the vectors to create triangles
         for(unsigned int c = 0; c < atvs.size()/3; c++)
         {
@@ -755,7 +758,7 @@ void ATScene::sceneReaderPhong(char* filename)
 						cout << "reading raw file" << endl;
 						// GET ALL TRIANGLES FROM THE G FILE
                         char gname[100];
-                        strcpy(gname, "/Users/DreW/Documents/ATShader/ATShader/");
+                        strcpy(gname, FILEPREFIX);
                         strcat(gname, gFile.c_str());
                         ifstream file(gname);
 						group = readRawFile(gname, &totalX, &totalY, &numVals);
@@ -765,7 +768,7 @@ void ATScene::sceneReaderPhong(char* filename)
 					{
 						
                         char gname[100];
-                        strcpy(gname, "/Users/DreW/Documents/ATShader/ATShader/");
+                        strcpy(gname, FILEPREFIX);
                         strcat(gname, gFile.c_str());
                         ifstream file(gname);
                         cout << "reading obj file" << gname << endl;

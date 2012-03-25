@@ -11,6 +11,8 @@ public:
 	ATTextureMap(int _width, int _height);
 	ATTextureMap(const ATTextureMap &copy);
 	~ATTextureMap();
+    
+    void cleanup();
 
 	void setHeight(int h);
 	void setWidth(int w);

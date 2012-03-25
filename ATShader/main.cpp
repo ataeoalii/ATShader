@@ -33,24 +33,24 @@ ATScene scene;
 
 int main (int argc, const char * argv[])
 {
-    
-    
-    char* filename = (char*)"/Users/DreW/Documents/ATShader/ATShader/scene.u3d";
+    cout << "\n\n" << endl;
+    char* cwd = getcwd(NULL, 0);
+    printf("Current Dir%s\n", cwd);
+    char* filename = (char*)"../../../../../scene.u3d";
     
     // read in scene file
     scene.sceneReaderPhong(filename);
     
-    ifstream vertexShaderFile("/Users/DreW/Documents/ATShader/ATShader/ATVertexShader.sdr");
+    ifstream vertexShaderFile("../../../../../ATShader/ATVertexShader.sdr");
 	printf("Reading in file ATVertexShader.sdr\n");
-    char* cwd = getcwd(NULL, 0);
-    printf("Current Dir%s\n", cwd);
+
     string vertStream((istreambuf_iterator<char>(vertexShaderFile)), istreambuf_iterator<char>());
     
     const GLchar* vertexShaderCode = (const GLchar*)vertStream.c_str();
     
     vertexShaderFile.close();
     
-    ifstream fragmentShaderFile("/Users/DreW/Documents/ATShader/ATShader/ATFragmentShader.sdr");
+    ifstream fragmentShaderFile("../../../../../ATShader/ATFragmentShader.sdr");
 	printf("Reading in file ATFragmentShader.sdr\n");
     
     string fragStream((istreambuf_iterator<char>(fragmentShaderFile)), istreambuf_iterator<char>());
@@ -119,7 +119,6 @@ int main (int argc, const char * argv[])
     
     glLinkProgram(program);
 
-    glEnable(GL_DEPTH_TEST);
     
     //check output
     GLsizei programLinkLogLength;
@@ -160,15 +159,13 @@ void IdleFunction(void)
 void ApplicationDisplay(void)
 {
     static float rotater = 0.0f;
-    rotater+=0.01f;
+    rotater+=0.1f;
     // setup variables for vertex and fragment shaders
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glEnable(GL_DEPTH_TEST);
     
     // get projection matrix
     projectionMatrix = scene.perspective;
-    
     
     glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, (GLfloat*)&projectionMatrix);
     
@@ -197,6 +194,22 @@ void ApplicationDisplay(void)
         // get object color
         ATColor col = scene.getObjects()[objIdx].materialColor;
         glUniform4f(glGetUniformLocation(program, "color"), col.getredF(), col.getgreenF(), col.getblueF(), col.getalphaF());
+        
+        if(col.getalphaF()<1.0f)
+        {
+            glDisable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND); 
+        }
+        else
+        {
+            glDisable(GL_BLEND);
+            glEnable(GL_DEPTH_TEST);
+        }
+        
+        // get specular color and shininess
+        glUniform1f(glGetUniformLocation(program, "shininess"), scene.getObjects()[objIdx].shininess);
+        ATColor specColor = scene.getObjects()[objIdx].specularColor;
+        glUniform4f(glGetUniformLocation(program, "specularColor"), specColor.getredF(), specColor.getgreenF(), specColor.getblueF(), specColor.getalphaF());
         
         float geometry[12*triangles.size()];
         int idx = 0;

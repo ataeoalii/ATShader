@@ -36,7 +36,7 @@ public:
     
     void splitString(string line, string retVals[], unsigned int count);
     
-    vector<ATVector4D> createVectors(char allCharsFromFile[], unsigned int count, float* totalX, float* totalY, int* numVals);
+    vector<ATVector4D> createVectors(char allCharsFromFile[], unsigned long count, float* totalX, float* totalY, int* numVals);
     
     bool isLineWhitespace(string line);
     

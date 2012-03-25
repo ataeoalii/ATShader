@@ -1,6 +1,8 @@
 uniform vec4 color;
 uniform vec4 ambientColor;
 uniform vec4 lightColor;
+uniform float shininess;
+uniform vec4 specularColor;
 
 varying vec4 eyeLightPosition;
 varying vec4 eyePosition;
@@ -9,12 +11,18 @@ varying vec3 eyeNormal;
 void main(void)
 {
     vec4 ambient = ambientColor * color;
-
+    
     vec3 incident = vec3(normalize(eyeLightPosition - eyePosition));
     float incidence = max(0.0, dot(incident, eyeNormal));
     vec4 diffuse = incidence * color * lightColor;
 
-    vec4 specular = ;
+    vec4 reflect = vec4(normalize((incident - (2.0 * dot(incident, eyeNormal) * eyeNormal))), 0.0);
+    vec4 view = normalize(eyePosition);
+    vec4 spec = specularColor * (pow(dot(view, reflect), shininess));
+    float specX = max(spec.x, 0.0);
+    float specY = max(spec.y, 0.0);
+    float specZ = max(spec.z, 0.0);
+    vec4 specular = vec4(specX, specY, specZ, 0.0);
     
     gl_FragColor = ambient + diffuse + specular;
 }

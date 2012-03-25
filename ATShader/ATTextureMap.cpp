@@ -63,3 +63,8 @@ int ATTextureMap::getWidth()
 {
 	return width;
 }
+
+void ATTextureMap::cleanup()
+{
+    delete pixelMap;
+}
