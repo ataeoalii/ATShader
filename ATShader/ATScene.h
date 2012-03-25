@@ -15,6 +15,7 @@ public:
     ATMatrix4 camera;
     ATMatrix4 perspective;
     ATMatrix4 viewport;
+    ATColor ambientColor;
     int width, height;
 	
     ATScene();

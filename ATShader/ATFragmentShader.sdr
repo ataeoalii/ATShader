@@ -1,19 +1,20 @@
 uniform vec4 color;
-uniform vec4 eyeLightPosition;
+uniform vec4 ambientColor;
+uniform vec4 lightColor;
 
+varying vec4 eyeLightPosition;
 varying vec4 eyePosition;
 varying vec3 eyeNormal;
 
-uniform vec4 lightAmbient;
-
 void main(void)
 {
-    //vec4 ambient = lightAmbient * color;
+    vec4 ambient = ambientColor * color;
 
-    //vec3 incident = vec3(normalize(eyeLightPosition - eyeLightPosition));
-    //float incidence = max(0.0, dot(incident, eyeNormal));
+    vec3 incident = vec3(normalize(eyeLightPosition - eyePosition));
+    float incidence = max(0.0, dot(incident, eyeNormal));
+    vec4 diffuse = incidence * color * lightColor;
 
-    //vec4 diffuse = color * incidence;
-
-    gl_FragColor = color;
+    vec4 specular = ;
+    
+    gl_FragColor = ambient + diffuse + specular;
 }

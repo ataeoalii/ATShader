@@ -36,5 +36,4 @@ void ATTriangleGroup::clear()
 	specularColor.setColor(1.0f, 0.0f, 0.0f, 0.0f);
 	materialColor.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	textured = false;
-	
 }

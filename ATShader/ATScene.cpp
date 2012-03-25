@@ -573,7 +573,7 @@ void ATScene::sceneReaderPhong(char* filename)
 	ATColor materialColor(1.0f, 1.0f, 1.0f, 1.0f);
 	ATColor specularColor(1.0f, 0.0f, 0.0f, 0.0f);
 	float alpha = 0.0f;
-	ATColor ambientColor(1.0f, 1.0f, 1.0f, 1.0f);
+	ambientColor = ATColor(1.0f, 1.0f, 1.0f, 1.0f);
     
 	camera = ATMatrix4::MkIdentityMatrix();
 	ATMatrix4 tempCamera = ATMatrix4::MkIdentityMatrix();

@@ -40,25 +40,6 @@ int main (int argc, const char * argv[])
     // read in scene file
     scene.sceneReaderPhong(filename);
     
-    cout << scene.getObjects()[0].triangles.size() << endl;
-    cout << "triangle size" << endl;
-    
-    // get projection matrix
-    projectionMatrix = scene.perspective; //ATMatrix4::ConcatMatrices(scene.perspective, scene.viewport);
-    
-//    projectionMatrix = ATMatrix4(1.0f, 0.0f, 0.0f, 0.0f,
-//                                 0.0f, 1.0f, 0.0f, 0.0f,
-//                                 0.0f, 0.0f, 1.0f, 0.0f,
-//                                 0.0f, 0.0f, 0.0f, 1.0f);
-    
-    // get modelview matrix
-    modelViewMatrix = scene.getObjects()[0].modelView;
-    
-//    modelViewMatrix = ATMatrix4(1.0f, 0.0f, 0.0f, 0.0f,
-//                                 1.0f, 0.0f, 0.0f, 0.0f,
-//                                 1.0f, 0.0f, 0.0f, 0.0f,
-//                                 1.0f, 0.0f, 0.0f, 0.0f);
-    
     ifstream vertexShaderFile("/Users/DreW/Documents/ATShader/ATShader/ATVertexShader.sdr");
 	printf("Reading in file ATVertexShader.sdr\n");
     char* cwd = getcwd(NULL, 0);
@@ -80,11 +61,11 @@ int main (int argc, const char * argv[])
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(scene.width, scene.height);
     glutCreateWindow("ATShader");
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     glutIdleFunc(IdleFunction);
     glutDisplayFunc(ApplicationDisplay);
     
-
     
     
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -106,6 +87,10 @@ int main (int argc, const char * argv[])
         printf("Vertex Shader Compile Log: \n%s", vertexCompileLog);
         free(vertexCompileLog);
     }
+    else
+    {
+        printf("NO ERRORS IN VERTEX SHADER\n\n");
+    }
 
     glCompileShader(fragmentShader);
     
@@ -120,14 +105,21 @@ int main (int argc, const char * argv[])
         printf("Fragment Shader Compile Log: \n%s", fragmentCompileLog);
         free(fragmentCompileLog);
     }
+    else
+    {
+        printf("NO ERRORS IN FRAGMENT SHADER\n\n");
+    }
     
     program = glCreateProgram();
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     
-    
+    glBindAttribLocation(program, 0, "position");
+    glBindAttribLocation(program, 1, "normal");
     
     glLinkProgram(program);
+
+    glEnable(GL_DEPTH_TEST);
     
     //check output
     GLsizei programLinkLogLength;
@@ -141,7 +133,10 @@ int main (int argc, const char * argv[])
         printf("Program Link Log: \n%s", programLinkLog);
         free(programLinkLog);
     }
-    
+    else
+    {
+        printf("NO ERRORS FOR PROGRAM LINKER\n\n");
+    }
     
     glUseProgram(program);
     glutMainLoop();
@@ -164,51 +159,94 @@ void IdleFunction(void)
  */
 void ApplicationDisplay(void)
 {
-
+    static float rotater = 0.0f;
+    rotater+=0.01f;
     // setup variables for vertex and fragment shaders
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glEnable(GL_DEPTH_TEST);
     
-    glBindAttribLocation(program, 0, "position");
-    //glUniform1f(glGetUniformLocation(program, "phase"), phase);
-    glUniformMatrix4fv(glGetUniformLocation(program, "modelView"), 1, GL_TRUE, (GLfloat*)&modelViewMatrix);
+    // get projection matrix
+    projectionMatrix = scene.perspective;
+    
+    
     glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, (GLfloat*)&projectionMatrix);
-    ATColor col = scene.getObjects()[0].materialColor;
-    glUniform4f(glGetUniformLocation(program, "color"), col.getredF(), col.getgreenF(), col.getblueF(), col.getalphaF());
+    
+    // get light position
     ATVector4D lpos = scene.getLights()[0].getPosition();
-    glUniform4f(glGetUniformLocation(program, "eyeLightPosition"), lpos.getX(), lpos.getY(), lpos.getZ(), lpos.getW());
+    glUniform4f(glGetUniformLocation(program, "lightPosition"), lpos.getX(), lpos.getY(), lpos.getZ(), lpos.getW());
+  
+    // get light color
+    ATColor lcol = scene.getLights()[0].getColor();
+    glUniform4f(glGetUniformLocation(program, "lightColor"), lcol.getredF(), lcol.getgreenF(), lcol.getblueF(), lcol.getalphaF());
     
-    vector<ATTriangle> triangles = scene.getObjects()[0].triangles;
+    // get ambient color
+    ATColor ambientColor = scene.ambientColor;
+    glUniform4f(glGetUniformLocation(program, "ambientColor"), ambientColor.getredF(), ambientColor.getgreenF(), ambientColor.getblueF(), ambientColor.getalphaF());
     
-    ATMatrix4 atm = ATMatrix4::ConcatMatrices(projectionMatrix, modelViewMatrix);
     
-    float geometry[12*triangles.size()];
-    int idx = 0;
-    for(unsigned int i=0; i<2; i++)
+    // draw every object in the scene
+    for(unsigned int objIdx=0; objIdx < scene.getObjects().size(); objIdx++)
     {
-        geometry[idx++]  = triangles[i].vertA.getX();
-        geometry[idx++]  = triangles[i].vertA.getY();
-        geometry[idx++]  = triangles[i].vertA.getZ();
-        geometry[idx++]  = 1.0f;
+        vector<ATTriangle> triangles = scene.getObjects()[objIdx].triangles;
         
-        geometry[idx++]  = triangles[i].vertB.getX();
-        geometry[idx++]  = triangles[i].vertB.getY();
-        geometry[idx++]  = triangles[i].vertB.getZ();
-        geometry[idx++]  = 1.0f;
+        // get modelview matrix
+        modelViewMatrix = scene.getObjects()[objIdx].modelView;
+        glUniformMatrix4fv(glGetUniformLocation(program, "modelView"), 1, GL_TRUE, (GLfloat*)&modelViewMatrix);
         
-        geometry[idx++]  = triangles[i].vertC.getX();
-        geometry[idx++]  = triangles[i].vertC.getY();
-        geometry[idx++]  = triangles[i].vertC.getZ();
-        geometry[idx++]  = 1.0f;
+        // get object color
+        ATColor col = scene.getObjects()[objIdx].materialColor;
+        glUniform4f(glGetUniformLocation(program, "color"), col.getredF(), col.getgreenF(), col.getblueF(), col.getalphaF());
         
+        float geometry[12*triangles.size()];
+        int idx = 0;
+        
+        float normals[9*triangles.size()];
+        int nidx = 0;
+        
+        for(unsigned int i=0; i< triangles.size(); i++)
+        {
+            geometry[idx++]  = triangles[i].vertA.getX();
+            geometry[idx++]  = triangles[i].vertA.getY();
+            geometry[idx++]  = triangles[i].vertA.getZ();
+            geometry[idx++]  = triangles[i].vertA.getW();
+        
+            //normals
+            normals[nidx++] = triangles[i].normA.getX();
+            normals[nidx++] = triangles[i].normA.getY();
+            normals[nidx++] = triangles[i].normA.getZ();
+            
+            geometry[idx++]  = triangles[i].vertB.getX();
+            geometry[idx++]  = triangles[i].vertB.getY();
+            geometry[idx++]  = triangles[i].vertB.getZ();
+            geometry[idx++]  = triangles[i].vertB.getW();
+        
+            // normals
+            normals[nidx++] = triangles[i].normB.getX();
+            normals[nidx++] = triangles[i].normB.getY();
+            normals[nidx++] = triangles[i].normB.getZ();
+            
+            geometry[idx++]  = triangles[i].vertC.getX();
+            geometry[idx++]  = triangles[i].vertC.getY();
+            geometry[idx++]  = triangles[i].vertC.getZ();
+            geometry[idx++]  = triangles[i].vertC.getW();
+        
+            // normals
+            normals[nidx++] = triangles[i].normC.getX();
+            normals[nidx++] = triangles[i].normC.getY();
+            normals[nidx++] = triangles[i].normC.getZ();
+        }
+    
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, geometry);
+        glEnableVertexAttribArray(0);
+        
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, normals);
+        glEnableVertexAttribArray(1);
+        
+        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*triangles.size()));
+        
+    
     }
-    
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, geometry);
-    glEnableVertexAttribArray(0);
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*triangles.size()));
-    
-    
     glutSwapBuffers();
     
 }

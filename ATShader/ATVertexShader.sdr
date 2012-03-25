@@ -1,12 +1,20 @@
 attribute vec4 position;
+attribute vec3 normal;
 
 uniform mat4 modelView;
 uniform mat4 projection;
+uniform vec4 lightPosition;
+
+varying vec4 eyePosition;
+varying vec3 eyeNormal;
+varying vec4 eyeLightPosition;
 
 void main(void)
 {
-    vec4 pos = projection * modelView * position;
-    vec4 eyePosition = modelView * position;
-    gl_Position = vec4(pos.x, pos.y, eyePosition.z * eyePosition.z, pos.w);
+    eyeLightPosition = modelView * lightPosition;
+    eyePosition = modelView * position;
+    eyeNormal = normalize(vec3(modelView * vec4(normal, 0.0)));
+
+    gl_Position = projection * (modelView * position);
 
 }
