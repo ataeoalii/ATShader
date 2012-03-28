@@ -2,13 +2,14 @@
 #include "ATScene.h"
 #include "ATMatrix4.h"
 #include "ATTransformation.h"
-#include "ATRaster3D.h"
 #include <iostream>
 #include <fstream>
 
+const char* FILEPREFIX = "../../../../../";
+
+
 using namespace std;
 
-const char* FILEPREFIX = "../../../../../";
 
 ATScene::ATScene()
 {
@@ -198,110 +199,10 @@ ATTriangleGroup ATScene::readRawFile( string filename, float* totalX, float* tot
 
 
 
-ATTextureMap ATScene::readInPPMTexture(string filename)
-{
-	ifstream file(filename.c_str());
-	printf("Reading in file %s\n", filename.c_str());
-	
-	string line;
-	int height, width, max;
-	bool magNum = true;
-	bool hw = true;
-	bool maxNum = true;
-    
-	if (file.is_open())
-	{	
-		while(file.good())
-		{
-			getline(file, line);
-			while(line.empty())
-			{
-				getline(file, line);
-			}
-			// P3
-			if(magNum)
-			{				
-				string vals[1];
-				splitString(line, vals, 1);
-				if(vals[0].compare("P3")!=0) cout << "Bad magic number" << endl;
-				magNum = false;
-			}
-			else if(hw)
-			{
-				
-				string vals[2];
-                
-				splitString(line, vals, 2);
-				
-				width = atoi(vals[0].c_str());
-				height = atoi(vals[1].c_str());
-                
-				hw = false;
-			}
-			else if(maxNum)
-			{
-				
-				string vals[1];
-                
-				splitString(line, vals, 1);
-				
-				max = atoi(vals[0].c_str());
-				maxNum = false;
-			}
-            
-			else
-			{
-				break;
-			}
-		}
-	}
-	else
-	{
-		cout << "error opening file" << endl;
-		cin.get();
-	}
-	
-	ATTextureMap textureRaster(width, height);
-	int index = 0, col = 0;
-	ATColor myColor(1.0f, 0.0f, 0.0f, 0.0f);
-	
-    
-	if (file.is_open())
-	{	
-		while(file.good())
-		{
-            
-			col = atoi(line.c_str());
-			if(index%3==0)
-				myColor.setredB(col);
-			if(index%3==1)
-				myColor.setgreenB(col);
-			if(index%3==2)
-			{
-				myColor.setblueB(col);
-				textureRaster.setPixel(index/3, myColor);
-			}
-			index++;
-			getline(file, line);
-            
-		}
-	}
-	if(!line.empty())
-	{
-		col = atoi(line.c_str());
-		myColor.setblueB(col);
-		textureRaster.setPixel(index/3, myColor);
-	}
-	return textureRaster;
-    
-}
-
-
-
 /**
  * Creates transformation matrix based off lines from the scene file.
  */
-ATMatrix4 ATScene::createTransformationMatrix(int* textured, ATTextureMap* textureRaster, ATMatrix4 tempCamera, string transformation, ATColor* materialColor, ATColor* specularColor, float* alpha)
+ATMatrix4 ATScene::createTransformationMatrix(int* textured, string* textureMap, ATMatrix4 tempCamera, string transformation, ATColor* materialColor, ATColor* specularColor, float* alpha)
 {
 	int index = 0;
 	while (ATScene::isWhitespace(transformation[index]))
@@ -338,7 +239,7 @@ ATMatrix4 ATScene::createTransformationMatrix(int* textured, ATTextureMap* textu
 	{
 		string values[2];
 		splitString(transformation, values, 2);
-		(*textureRaster) = readInPPMTexture(values[1]);
+		(*textureMap) = values[1];
 		(*textured) = 1;
 		return tempCamera;
 	}
@@ -554,8 +455,6 @@ void ATScene::sceneReaderPhong(char* filename)
 	ifstream file(filename);
 	printf("Reading in file %s\n", filename);
 	
-	ATTextureMap textureRaster;
-	
 	string line;  // line to be read in from the scene file
 	
 	string gFile; // RAW file containing triangle data
@@ -570,6 +469,7 @@ void ATScene::sceneReaderPhong(char* filename)
 	float upX, upY, upZ;
 	float fov, aspectRatio, nearDist, farDist;
     
+    string* textureMap = new string();
 	ATTriangleGroup group(true);
 	int* textured = new int(0);
     
@@ -675,40 +575,40 @@ void ATScene::sceneReaderPhong(char* filename)
                         
                         /* DO THIS IN OPEN GL*/
                         
-//                        int culledtriangles = 0;
-                  
-//                        // TAKE THE CAMERA MATRIX AND MULTIPLY BY ALL TRIANGLES IN THE G FILE
-//                        for (unsigned int tri = 0; tri < group.triangles.size(); tri++)
-//                        {	
-//                            // Multiplies the camera matrix by each vertex in the triangle
-//                            group.triangles[tri].vertA = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertA);
-//                            group.triangles[tri].vertB = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertB);
-//                            group.triangles[tri].vertC = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertC);
-//                            
-//                            // Transform the normals as well
-//                            group.triangles[tri].normA = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normA);
-//                            group.triangles[tri].normB = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normB);
-//                            group.triangles[tri].normC = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normC);
-//                            
-//                            // Do some culling
-//                            ATVector4D triangleNormal = ATVector4D::crossProduct(
-//                                                                                 ATVector4D::subtractTwoVectors(group.triangles[tri].vertB,  group.triangles[tri].vertA),
-//                                                                                 ATVector4D::subtractTwoVectors(group.triangles[tri].vertC,  group.triangles[tri].vertA));
-//                            
-//                            if(ATVector4D::dot(triangleNormal, group.triangles[tri].vertA) <= 0.0f)
-//                            {
-//                                group.triangles[tri].phong = true;
-//                                group.triangles[tri].eyeA = group.triangles[tri].vertA;
-//                                group.triangles[tri].eyeB = group.triangles[tri].vertB;
-//                                group.triangles[tri].eyeC = group.triangles[tri].vertC;
-//                                
-//                            }
-//                            else
-//                            {
-//                                culledtriangles++;
-//                            }
-//                            
-//                        }
+                        //                        int culledtriangles = 0;
+                        
+                        //                        // TAKE THE CAMERA MATRIX AND MULTIPLY BY ALL TRIANGLES IN THE G FILE
+                        //                        for (unsigned int tri = 0; tri < group.triangles.size(); tri++)
+                        //                        {	
+                        //                            // Multiplies the camera matrix by each vertex in the triangle
+                        //                            group.triangles[tri].vertA = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertA);
+                        //                            group.triangles[tri].vertB = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertB);
+                        //                            group.triangles[tri].vertC = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertC);
+                        //                            
+                        //                            // Transform the normals as well
+                        //                            group.triangles[tri].normA = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normA);
+                        //                            group.triangles[tri].normB = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normB);
+                        //                            group.triangles[tri].normC = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normC);
+                        //                            
+                        //                            // Do some culling
+                        //                            ATVector4D triangleNormal = ATVector4D::crossProduct(
+                        //                                                                                 ATVector4D::subtractTwoVectors(group.triangles[tri].vertB,  group.triangles[tri].vertA),
+                        //                                                                                 ATVector4D::subtractTwoVectors(group.triangles[tri].vertC,  group.triangles[tri].vertA));
+                        //                            
+                        //                            if(ATVector4D::dot(triangleNormal, group.triangles[tri].vertA) <= 0.0f)
+                        //                            {
+                        //                                group.triangles[tri].phong = true;
+                        //                                group.triangles[tri].eyeA = group.triangles[tri].vertA;
+                        //                                group.triangles[tri].eyeB = group.triangles[tri].vertB;
+                        //                                group.triangles[tri].eyeC = group.triangles[tri].vertC;
+                        //                                
+                        //                            }
+                        //                            else
+                        //                            {
+                        //                                culledtriangles++;
+                        //                            }
+                        //                            
+                        //                        }
                         
                         group.modelView = tempCamera;
                         group.alpha = materialColor.getalphaF();
@@ -718,9 +618,9 @@ void ATScene::sceneReaderPhong(char* filename)
                         if((*textured)==1) group.textured = true;
                         else group.textured = false;
                         if (group.textured)
-                            group.textureRaster = textureRaster;
+                            group.textureMap = textureMap;
                         this->addObjectToScene(group);
-
+                        
                         
                         
                         
@@ -799,7 +699,7 @@ void ATScene::sceneReaderPhong(char* filename)
 				else
 				{
 					int* text = new int(0);
-					tempCamera = createTransformationMatrix(text, &textureRaster, tempCamera, line, &materialColor, &specularColor, &alpha);
+					tempCamera = createTransformationMatrix(text, textureMap, tempCamera, line, &materialColor, &specularColor, &alpha);
 					if((*text) == 1) (*textured) = 1;
 					delete text;
                     
@@ -819,40 +719,40 @@ void ATScene::sceneReaderPhong(char* filename)
     
 	int culledtriangles = 0;
     
-     /* DO THIS IN OPEN GL*/
+    /* DO THIS IN OPEN GL*/
 	
-//	// TAKE THE CAMERA MATRIX AND MULTIPLY BY ALL TRIANGLES IN THE G FILE
-//	for (unsigned int tri = 0; tri < group.triangles.size(); tri++)
-//	{	
-//		// Multiplies the modelview matrix by each vertex in the triangle
-//		group.triangles[tri].vertA = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertA);
-//		group.triangles[tri].vertB = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertB);
-//		group.triangles[tri].vertC = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertC);
-//        
-//		// Transform the normals as well
-//		group.triangles[tri].normA = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normA);
-//		group.triangles[tri].normB = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normB);
-//		group.triangles[tri].normC = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normC);
-//        
-//		// Do some culling
-//		ATVector4D triangleNormal = ATVector4D::crossProduct(
-//                                                             ATVector4D::subtractTwoVectors(group.triangles[tri].vertB,  group.triangles[tri].vertA),
-//                                                             ATVector4D::subtractTwoVectors(group.triangles[tri].vertC,  group.triangles[tri].vertA));
-//        
-//		if(ATVector4D::dot(triangleNormal, group.triangles[tri].vertA) <= 0.0f)
-//		{
-//			group.triangles[tri].phong = true;
-//			group.triangles[tri].eyeA = group.triangles[tri].vertA;
-//			group.triangles[tri].eyeB = group.triangles[tri].vertB;
-//			group.triangles[tri].eyeC = group.triangles[tri].vertC;
-//            
-//		}
-//		else
-//		{
-//			culledtriangles++;
-//		}
-//        
-//	}
+    //	// TAKE THE CAMERA MATRIX AND MULTIPLY BY ALL TRIANGLES IN THE G FILE
+    //	for (unsigned int tri = 0; tri < group.triangles.size(); tri++)
+    //	{	
+    //		// Multiplies the modelview matrix by each vertex in the triangle
+    //		group.triangles[tri].vertA = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertA);
+    //		group.triangles[tri].vertB = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertB);
+    //		group.triangles[tri].vertC = ATMatrix4::MultiplyMatrix(tempCamera, group.triangles[tri].vertC);
+    //        
+    //		// Transform the normals as well
+    //		group.triangles[tri].normA = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normA);
+    //		group.triangles[tri].normB = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normB);
+    //		group.triangles[tri].normC = ATMatrix4::MultiplyMatrix3D(tempCamera, group.triangles[tri].normC);
+    //        
+    //		// Do some culling
+    //		ATVector4D triangleNormal = ATVector4D::crossProduct(
+    //                                                             ATVector4D::subtractTwoVectors(group.triangles[tri].vertB,  group.triangles[tri].vertA),
+    //                                                             ATVector4D::subtractTwoVectors(group.triangles[tri].vertC,  group.triangles[tri].vertA));
+    //        
+    //		if(ATVector4D::dot(triangleNormal, group.triangles[tri].vertA) <= 0.0f)
+    //		{
+    //			group.triangles[tri].phong = true;
+    //			group.triangles[tri].eyeA = group.triangles[tri].vertA;
+    //			group.triangles[tri].eyeB = group.triangles[tri].vertB;
+    //			group.triangles[tri].eyeC = group.triangles[tri].vertC;
+    //            
+    //		}
+    //		else
+    //		{
+    //			culledtriangles++;
+    //		}
+    //        
+    //	}
     
     group.modelView = tempCamera;
 	group.alpha = materialColor.getalphaF();
@@ -862,7 +762,7 @@ void ATScene::sceneReaderPhong(char* filename)
 	if((*textured)==1) group.textured = true;
 	else group.textured = false;
 	if (group.textured)
-		group.textureRaster = textureRaster;
+		group.textureMap = textureMap;
 	this->addObjectToScene(group);
     
 	cout << "culled triangles: " << culledtriangles << endl;
@@ -876,60 +776,60 @@ void ATScene::sceneReaderPhong(char* filename)
     
     /* DO THIS IN OPEN GL*/
     
-//	// for each light, transform the light into eye coordinates
-//	for(unsigned int lightIndex = 0; lightIndex < this->lights.size(); lightIndex++)
-//	{
-//		// transform light into eye coords
-//		ATVector4D lpos = ATMatrix4::MultiplyMatrix(camera, this->lights[lightIndex].getPosition());
-//		lights[lightIndex].setPosition(lpos.getX(), lpos.getY(), lpos.getZ());
-//	}
+    //	// for each light, transform the light into eye coordinates
+    //	for(unsigned int lightIndex = 0; lightIndex < this->lights.size(); lightIndex++)
+    //	{
+    //		// transform light into eye coords
+    //		ATVector4D lpos = ATMatrix4::MultiplyMatrix(camera, this->lights[lightIndex].getPosition());
+    //		lights[lightIndex].setPosition(lpos.getX(), lpos.getY(), lpos.getZ());
+    //	}
     
 	// transform all triangles by the perspective, viewport matrices
 	perspective = ATMatrix4::MkPerspective(fov, aspectRatio, nearDist, farDist);
     viewport = ATMatrix4::MkViewport(0, 0, width, height);
-
     
     
-     /* DO THIS IN OPEN GL*/
     
-//	for(unsigned int a = 0; a < objectsInScene.size(); a++)
-//	{
-//		for(unsigned int b=0; b < objectsInScene[a].triangles.size(); b++)
-//		{
-//			ATColor vertAColor = objectsInScene[a].triangles[b].vertA.getColor();
-//			ATColor vertBColor = objectsInScene[a].triangles[b].vertB.getColor();
-//			ATColor vertCColor = objectsInScene[a].triangles[b].vertC.getColor();
-//			objectsInScene[a].triangles[b].vertA = ATMatrix4::MultiplyMatrixZ0(perspective, objectsInScene[a].triangles[b].vertA );
-//			objectsInScene[a].triangles[b].vertB = ATMatrix4::MultiplyMatrixZ0(perspective, objectsInScene[a].triangles[b].vertB );
-//			objectsInScene[a].triangles[b].vertC = ATMatrix4::MultiplyMatrixZ0(perspective, objectsInScene[a].triangles[b].vertC );
-//            
-//			objectsInScene[a].triangles[b].vertA.scaleVectorNotZ(1/objectsInScene[a].triangles[b].vertA.getZ());
-//			objectsInScene[a].triangles[b].vertB.scaleVectorNotZ(1/objectsInScene[a].triangles[b].vertB.getZ());
-//			objectsInScene[a].triangles[b].vertC.scaleVectorNotZ(1/objectsInScene[a].triangles[b].vertC.getZ());
-//            
-//			objectsInScene[a].triangles[b].vertA = ATMatrix4::MultiplyMatrix(viewport, objectsInScene[a].triangles[b].vertA );
-//			objectsInScene[a].triangles[b].vertB = ATMatrix4::MultiplyMatrix(viewport, objectsInScene[a].triangles[b].vertB );
-//			objectsInScene[a].triangles[b].vertC = ATMatrix4::MultiplyMatrix(viewport, objectsInScene[a].triangles[b].vertC );
-//            
-//			objectsInScene[a].triangles[b].vertA.setColor(vertAColor);
-//			objectsInScene[a].triangles[b].vertB.setColor(vertBColor);
-//			objectsInScene[a].triangles[b].vertC.setColor(vertCColor);
-//		}
-//	}
+    /* DO THIS IN OPEN GL*/
+    
+    //	for(unsigned int a = 0; a < objectsInScene.size(); a++)
+    //	{
+    //		for(unsigned int b=0; b < objectsInScene[a].triangles.size(); b++)
+    //		{
+    //			ATColor vertAColor = objectsInScene[a].triangles[b].vertA.getColor();
+    //			ATColor vertBColor = objectsInScene[a].triangles[b].vertB.getColor();
+    //			ATColor vertCColor = objectsInScene[a].triangles[b].vertC.getColor();
+    //			objectsInScene[a].triangles[b].vertA = ATMatrix4::MultiplyMatrixZ0(perspective, objectsInScene[a].triangles[b].vertA );
+    //			objectsInScene[a].triangles[b].vertB = ATMatrix4::MultiplyMatrixZ0(perspective, objectsInScene[a].triangles[b].vertB );
+    //			objectsInScene[a].triangles[b].vertC = ATMatrix4::MultiplyMatrixZ0(perspective, objectsInScene[a].triangles[b].vertC );
+    //            
+    //			objectsInScene[a].triangles[b].vertA.scaleVectorNotZ(1/objectsInScene[a].triangles[b].vertA.getZ());
+    //			objectsInScene[a].triangles[b].vertB.scaleVectorNotZ(1/objectsInScene[a].triangles[b].vertB.getZ());
+    //			objectsInScene[a].triangles[b].vertC.scaleVectorNotZ(1/objectsInScene[a].triangles[b].vertC.getZ());
+    //            
+    //			objectsInScene[a].triangles[b].vertA = ATMatrix4::MultiplyMatrix(viewport, objectsInScene[a].triangles[b].vertA );
+    //			objectsInScene[a].triangles[b].vertB = ATMatrix4::MultiplyMatrix(viewport, objectsInScene[a].triangles[b].vertB );
+    //			objectsInScene[a].triangles[b].vertC = ATMatrix4::MultiplyMatrix(viewport, objectsInScene[a].triangles[b].vertC );
+    //            
+    //			objectsInScene[a].triangles[b].vertA.setColor(vertAColor);
+    //			objectsInScene[a].triangles[b].vertB.setColor(vertBColor);
+    //			objectsInScene[a].triangles[b].vertC.setColor(vertCColor);
+    //		}
+    //	}
     
     
 	cout << "writing to raster" << endl;
     
     
-     /* DO THIS IN OPEN GL*/
+    /* DO THIS IN OPEN GL*/
     
-//	// create the raster
-//	ATRaster3D raster(width, height);
-//	//rasterize scene
-//	ATRaster3D::PhongInterpolateScene(&raster, (const ATScene*) this, ambientColor);
-//	// save to ppm and bmp
-//	ATRaster3D::ATSaveToPPM(raster.getPixels(), raster.getWidth(), raster.getHeight(), (char*)"scene.ppm");
-//	ATRaster3D::ATSaveToBMP(raster.getPixels(), raster.getWidth(), raster.getHeight(), (char*)"scene.bmp");
+    //	// create the raster
+    //	ATRaster3D raster(width, height);
+    //	//rasterize scene
+    //	ATRaster3D::PhongInterpolateScene(&raster, (const ATScene*) this, ambientColor);
+    //	// save to ppm and bmp
+    //	ATRaster3D::ATSaveToPPM(raster.getPixels(), raster.getWidth(), raster.getHeight(), (char*)"scene.ppm");
+    //	ATRaster3D::ATSaveToBMP(raster.getPixels(), raster.getWidth(), raster.getHeight(), (char*)"scene.bmp");
     
     
 	cout << "Excellent work my friend!\nData has been saved and written to scene.ppm and scene.bmp!\n";

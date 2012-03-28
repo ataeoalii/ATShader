@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ATTEXTUREMAP_H_
+#define _ATTEXTUREMAP_H_
 #include "ATColor.h"
 
 class ATTextureMap
@@ -23,3 +24,4 @@ public:
 	ATColor getPixel(int index);
 };
 
+#endif

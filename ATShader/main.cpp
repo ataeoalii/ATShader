@@ -8,14 +8,16 @@
 
 
 
-
 #include <iostream>
+#include <stdlib.h>
 #include <string.h>
 #include <GLUT/glut.h>
 #include <fstream>
 #include "ATMatrix4.h"
 #include "ATVector4D.h"
 #include "ATScene.h"
+
+const char* FPREFIX = "../../../../../";
 
 using namespace std;
 
@@ -30,9 +32,52 @@ ATMatrix4 projectionMatrix;
 ATScene scene;
 
 
+void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, int** texels);
+void readInBMPtexture(string filename, int* width, int* height, int* maxNumber, int** texels);
+
+/**
+ * Assuming P3 format where RGB values are integers between 0 and maxNum.
+ */
+void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, int** texels)
+{
+    FILE* file;
+    char fname[200];
+    strcpy(fname, FPREFIX);
+    strcat(fname, filename.c_str());
+    file = fopen(fname, "r");
+    
+    char* magNumber;
+    fscanf(file, "%s", &magNumber);
+    fscanf(file, "%d %d", width, height);
+    fscanf(file, "%d", maxNumber);
+    
+    (*texels) = new int[(*width)*(*height)*3];
+    int temp;
+    int idx = 0;
+    while (fscanf(file, "%d", &temp) != EOF)
+    {
+        (*texels)[idx++] = temp;
+    }
+    
+//    *texels = texs;
+    
+    cout << "width" << (*width) << endl;
+    cout << "height" << (*height) << endl;
+    cout << "maxNumber" << (*maxNumber) << endl;
+    // terminate
+    fclose (file);
+    
+}
+
+
+void readInBMPtexture(string filename, int* width, int* height, int* maxNumber, int** texels)
+{
+    
+}
 
 int main (int argc, const char * argv[])
 {
+    
     cout << "\n\n" << endl;
     char* cwd = getcwd(NULL, 0);
     printf("Current Dir%s\n", cwd);
@@ -43,7 +88,7 @@ int main (int argc, const char * argv[])
     
     ifstream vertexShaderFile("../../../../../ATShader/ATVertexShader.sdr");
 	printf("Reading in file ATVertexShader.sdr\n");
-
+    
     string vertStream((istreambuf_iterator<char>(vertexShaderFile)), istreambuf_iterator<char>());
     
     const GLchar* vertexShaderCode = (const GLchar*)vertStream.c_str();
@@ -91,7 +136,7 @@ int main (int argc, const char * argv[])
     {
         printf("NO ERRORS IN VERTEX SHADER\n\n");
     }
-
+    
     glCompileShader(fragmentShader);
     
     //check output
@@ -116,9 +161,10 @@ int main (int argc, const char * argv[])
     
     glBindAttribLocation(program, 0, "position");
     glBindAttribLocation(program, 1, "normal");
+    glBindAttribLocation(program, 2, "texture");
     
     glLinkProgram(program);
-
+    
     
     //check output
     GLsizei programLinkLogLength;
@@ -172,7 +218,7 @@ void ApplicationDisplay(void)
     // get light position
     ATVector4D lpos = scene.getLights()[0].getPosition();
     glUniform4f(glGetUniformLocation(program, "lightPosition"), lpos.getX(), lpos.getY(), lpos.getZ(), lpos.getW());
-  
+    
     // get light color
     ATColor lcol = scene.getLights()[0].getColor();
     glUniform4f(glGetUniformLocation(program, "lightColor"), lcol.getredF(), lcol.getgreenF(), lcol.getblueF(), lcol.getalphaF());
@@ -185,25 +231,57 @@ void ApplicationDisplay(void)
     // draw every object in the scene
     for(unsigned int objIdx=0; objIdx < scene.getObjects().size(); objIdx++)
     {
-        vector<ATTriangle> triangles = scene.getObjects()[objIdx].triangles;
+        ATTriangleGroup& thisObject = scene.getObjects()[objIdx];
         
         // get modelview matrix
         modelViewMatrix = scene.getObjects()[objIdx].modelView;
         glUniformMatrix4fv(glGetUniformLocation(program, "modelView"), 1, GL_TRUE, (GLfloat*)&modelViewMatrix);
         
-        // get object color
-        ATColor col = scene.getObjects()[objIdx].materialColor;
-        glUniform4f(glGetUniformLocation(program, "color"), col.getredF(), col.getgreenF(), col.getblueF(), col.getalphaF());
-        
-        if(col.getalphaF()<1.0f)
-        {
-            glDisable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND); 
-        }
-        else
+        // set textured
+        glUniform1i(glGetUniformLocation(program, "textured"), thisObject.textured);
+
+        if(thisObject.textured)
         {
             glDisable(GL_BLEND);
             glEnable(GL_DEPTH_TEST);
+            
+            
+            glEnable(GL_TEXTURE_2D);
+            
+            // debug - turn on green in case texture is not loaded
+            glUniform4f(glGetUniformLocation(program, "color"),0.0f, 1.0f, 0.0f, 0.0f);
+            
+            int width, height, maxNumber;
+            int* texels;
+            readInPPMtexture((*thisObject.textureMap), &width, &height, &maxNumber, &texels);
+            
+            GLuint textureID = 3;
+            glGenTextures(1, &textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); 
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+            
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_INT, texels);
+            
+            glUniform1i(glGetUniformLocation(program, "textureMap"), textureID);
+        }
+        else
+        {
+            // get object color
+            ATColor col = scene.getObjects()[objIdx].materialColor;
+            glUniform4f(glGetUniformLocation(program, "color"), col.getredF(), col.getgreenF(), col.getblueF(), col.getalphaF());
+
+            // if alpha is less than one, blend with whats in the raster, otherwise turn on depth buffer
+            if(col.getalphaF()<1.0f)
+            {
+                glDisable(GL_DEPTH_TEST);
+                glEnable(GL_BLEND); 
+            }
+            else
+            {
+                glDisable(GL_BLEND);
+                glEnable(GL_DEPTH_TEST);
+            }
         }
         
         // get specular color and shininess
@@ -211,54 +289,75 @@ void ApplicationDisplay(void)
         ATColor specColor = scene.getObjects()[objIdx].specularColor;
         glUniform4f(glGetUniformLocation(program, "specularColor"), specColor.getredF(), specColor.getgreenF(), specColor.getblueF(), specColor.getalphaF());
         
-        float geometry[12*triangles.size()];
+        float geometry[12*thisObject.triangles.size()];
         int idx = 0;
         
-        float normals[9*triangles.size()];
+        float normals[9*thisObject.triangles.size()];
         int nidx = 0;
         
-        for(unsigned int i=0; i< triangles.size(); i++)
+        float textures[6*thisObject.triangles.size()];
+        int tidx = 0;
+        
+        for(unsigned int i=0; i< thisObject.triangles.size(); i++)
         {
-            geometry[idx++]  = triangles[i].vertA.getX();
-            geometry[idx++]  = triangles[i].vertA.getY();
-            geometry[idx++]  = triangles[i].vertA.getZ();
-            geometry[idx++]  = triangles[i].vertA.getW();
-        
+            geometry[idx++]  = thisObject.triangles[i].vertA.getX();
+            geometry[idx++]  = thisObject.triangles[i].vertA.getY();
+            geometry[idx++]  = thisObject.triangles[i].vertA.getZ();
+            geometry[idx++]  = thisObject.triangles[i].vertA.getW();
+            
             //normals
-            normals[nidx++] = triangles[i].normA.getX();
-            normals[nidx++] = triangles[i].normA.getY();
-            normals[nidx++] = triangles[i].normA.getZ();
+            normals[nidx++] = thisObject.triangles[i].normA.getX();
+            normals[nidx++] = thisObject.triangles[i].normA.getY();
+            normals[nidx++] = thisObject.triangles[i].normA.getZ();
             
-            geometry[idx++]  = triangles[i].vertB.getX();
-            geometry[idx++]  = triangles[i].vertB.getY();
-            geometry[idx++]  = triangles[i].vertB.getZ();
-            geometry[idx++]  = triangles[i].vertB.getW();
-        
-            // normals
-            normals[nidx++] = triangles[i].normB.getX();
-            normals[nidx++] = triangles[i].normB.getY();
-            normals[nidx++] = triangles[i].normB.getZ();
+            geometry[idx++]  = thisObject.triangles[i].vertB.getX();
+            geometry[idx++]  = thisObject.triangles[i].vertB.getY();
+            geometry[idx++]  = thisObject.triangles[i].vertB.getZ();
+            geometry[idx++]  = thisObject.triangles[i].vertB.getW();
             
-            geometry[idx++]  = triangles[i].vertC.getX();
-            geometry[idx++]  = triangles[i].vertC.getY();
-            geometry[idx++]  = triangles[i].vertC.getZ();
-            geometry[idx++]  = triangles[i].vertC.getW();
-        
             // normals
-            normals[nidx++] = triangles[i].normC.getX();
-            normals[nidx++] = triangles[i].normC.getY();
-            normals[nidx++] = triangles[i].normC.getZ();
+            normals[nidx++] = thisObject.triangles[i].normB.getX();
+            normals[nidx++] = thisObject.triangles[i].normB.getY();
+            normals[nidx++] = thisObject.triangles[i].normB.getZ();
+            
+            geometry[idx++]  = thisObject.triangles[i].vertC.getX();
+            geometry[idx++]  = thisObject.triangles[i].vertC.getY();
+            geometry[idx++]  = thisObject.triangles[i].vertC.getZ();
+            geometry[idx++]  = thisObject.triangles[i].vertC.getW();
+            
+            // normals
+            normals[nidx++] = thisObject.triangles[i].normC.getX();
+            normals[nidx++] = thisObject.triangles[i].normC.getY();
+            normals[nidx++] = thisObject.triangles[i].normC.getZ();
+            
+            if (thisObject.textured) 
+            {
+                //textures
+                textures[tidx++] = thisObject.triangles[i].textA.getX();
+                textures[tidx++] = thisObject.triangles[i].textA.getY();
+                
+                //textures
+                textures[tidx++] = thisObject.triangles[i].textB.getX();
+                textures[tidx++] = thisObject.triangles[i].textB.getY();
+                
+                //textures
+                textures[tidx++] = thisObject.triangles[i].textC.getX();
+                textures[tidx++] = thisObject.triangles[i].textC.getY();   
+            }
         }
-    
+        
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, geometry);
         glEnableVertexAttribArray(0);
         
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, normals);
         glEnableVertexAttribArray(1);
         
-        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*triangles.size()));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textures);
+        glEnableVertexAttribArray(2);
         
-    
+        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*thisObject.triangles.size()));
+        
+        
     }
     glutSwapBuffers();
     

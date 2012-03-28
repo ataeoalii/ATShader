@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ATTRIANGLEGROUP_H_
+#define _ATTRIANGLEGROUP_H_
 #include "ATTriangle.h"
 #include "ATColor.h"
 #include "ATTextureMap.h"
@@ -13,7 +14,9 @@ class ATTriangleGroup
 public:
 	vector<ATTriangle> triangles;
 	bool raw, textured;
-	ATTextureMap textureRaster;
+	string* textureMap;
+    int textWidth;
+    int textHeight;
 	float alpha;
 	float shininess;
 	ATColor specularColor;
@@ -30,3 +33,4 @@ public:
 	void clear();
 };
 
+#endif

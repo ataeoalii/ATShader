@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ATLIGHT_H_
+#define _ATLIGHT_H_
 #include"ATVector4D.h"
 #include "ATColor.h"
 
@@ -17,3 +18,4 @@ public:
 	void setColor(float a, float r, float g, float b);
 };
 
+#endif

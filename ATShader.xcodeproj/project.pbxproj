@@ -24,7 +24,6 @@
 		3A7E2D281511398400280E46 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A7E2D271511398400280E46 /* CoreFoundation.framework */; };
 		3AB1CAD9150FAA6E000FCE4E /* ATColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CAD8150FAA6E000FCE4E /* ATColor.cpp */; };
 		3AB1CADE150FAAF7000FCE4E /* ATLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CADC150FAAF7000FCE4E /* ATLight.cpp */; };
-		3AB1CAE4150FB78A000FCE4E /* ATRaster3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CAE3150FB78A000FCE4E /* ATRaster3D.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -69,8 +68,6 @@
 		3AB1CADB150FAA78000FCE4E /* ATColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATColor.h; sourceTree = "<group>"; };
 		3AB1CADC150FAAF7000FCE4E /* ATLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATLight.cpp; sourceTree = "<group>"; };
 		3AB1CADD150FAAF7000FCE4E /* ATLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLight.h; sourceTree = "<group>"; };
-		3AB1CAE3150FB78A000FCE4E /* ATRaster3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATRaster3D.cpp; sourceTree = "<group>"; };
-		3AB1CAE5150FB794000FCE4E /* ATRaster3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATRaster3D.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +126,6 @@
 		3AB1CADF150FAF13000FCE4E /* includes */ = {
 			isa = PBXGroup;
 			children = (
-				3AB1CAE5150FB794000FCE4E /* ATRaster3D.h */,
 				3AB1CADB150FAA78000FCE4E /* ATColor.h */,
 				3AB1CADD150FAAF7000FCE4E /* ATLight.h */,
 				3A208087150DAE9F0024103C /* ATMatrix4.h */,
@@ -148,7 +144,6 @@
 		3AB1CAE0150FAF2A000FCE4E /* implementation */ = {
 			isa = PBXGroup;
 			children = (
-				3AB1CAE3150FB78A000FCE4E /* ATRaster3D.cpp */,
 				3AB1CAD8150FAA6E000FCE4E /* ATColor.cpp */,
 				3AB1CADC150FAAF7000FCE4E /* ATLight.cpp */,
 				3A208086150DAE9F0024103C /* ATMatrix4.cpp */,
@@ -228,7 +223,6 @@
 				3A2080A3150DAE9F0024103C /* ATVector4D.cpp in Sources */,
 				3AB1CAD9150FAA6E000FCE4E /* ATColor.cpp in Sources */,
 				3AB1CADE150FAAF7000FCE4E /* ATLight.cpp in Sources */,
-				3AB1CAE4150FB78A000FCE4E /* ATRaster3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +248,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -274,6 +269,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
@@ -283,6 +279,7 @@
 		3A649F23150AE5A3002AA2F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_WARN_PEDANTIC = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -290,6 +287,7 @@
 		3A649F24150AE5A3002AA2F6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_WARN_PEDANTIC = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

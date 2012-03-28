@@ -3,18 +3,31 @@ uniform vec4 ambientColor;
 uniform vec4 lightColor;
 uniform float shininess;
 uniform vec4 specularColor;
+uniform int textured;
+
+uniform sampler2D textureMap;
 
 varying vec4 eyeLightPosition;
 varying vec4 eyePosition;
 varying vec3 eyeNormal;
+varying vec2 textureCoord;
 
 void main(void)
 {
-    vec4 ambient = ambientColor * color;
+    vec4 finalColor;
+    if(textured!=0)
+    {
+        finalColor = texture2D(textureMap, textureCoord);
+    }
+    else
+    {
+        finalColor = color;
+    }
+    vec4 ambient = ambientColor * finalColor;
     
     vec3 incident = vec3(normalize(eyeLightPosition - eyePosition));
     float incidence = max(0.0, dot(incident, eyeNormal));
-    vec4 diffuse = incidence * color * lightColor;
+    vec4 diffuse = incidence * finalColor * lightColor;
 
     vec4 reflect = vec4(normalize((incident - (2.0 * dot(incident, eyeNormal) * eyeNormal))), 0.0);
     vec4 view = normalize(eyePosition);

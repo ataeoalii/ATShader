@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ATSCENE_H_
+#define _ATSCENE_H_
 #include "ATLight.h"
 #include "ATTriangleGroup.h"
 #include "ATMatrix4.h"
@@ -41,16 +42,14 @@ public:
     bool isLineWhitespace(string line);
     
     ATTriangleGroup readRawFile( string filename, float* totalX, float* totalY, int* numVals);
+
     
-    ATTextureMap readInBMPTexture(string filename);
-    
-    ATTextureMap readInPPMTexture(string filename);
-    
-    ATMatrix4 createTransformationMatrix(int* textured, ATTextureMap* textureRaster, ATMatrix4 tempCamera, string transformation, ATColor* materialColor, ATColor* specularColor, float* alpha);
+    ATMatrix4 createTransformationMatrix(int* textured, string* textureMap, ATMatrix4 tempCamera, string transformation, ATColor* materialColor, ATColor* specularColor, float* alpha);
     
     ATTriangleGroup ObjReader(string filename, float *totalX, float *totalY, int *numVals);
     
     void sceneReaderPhong(char* filename);
     
 };
+#endif
 
