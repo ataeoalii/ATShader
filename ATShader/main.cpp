@@ -2,6 +2,9 @@
 //  main.cpp
 //  ATShader
 //
+// This program creates a 3D scene with OpenGL with Phong
+// Shading as well as 2D Textures in PPM format.
+//
 //  Created by Andrew Taeoalii on 3/9/12.
 //  Copyright 2012 Apple Inc. All rights reserved.
 //
@@ -30,15 +33,16 @@ GLuint program;
 ATMatrix4 modelViewMatrix;
 ATMatrix4 projectionMatrix;
 ATScene scene;
+GLuint textureID;
 
 
-void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, int** texels);
-void readInBMPtexture(string filename, int* width, int* height, int* maxNumber, int** texels);
+void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, ATColor** texels);
+
 
 /**
  * Assuming P3 format where RGB values are integers between 0 and maxNum.
  */
-void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, int** texels)
+void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, ATColor** texels)
 {
     FILE* file;
     char fname[200];
@@ -51,29 +55,33 @@ void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, 
     fscanf(file, "%d %d", width, height);
     fscanf(file, "%d", maxNumber);
     
-    (*texels) = new int[(*width)*(*height)*3];
-    int temp;
+    (*texels) = new ATColor[(*width)*(*height)*3];
+    uint8_t temp, tempr, tempg, tempb;
     int idx = 0;
     while (fscanf(file, "%d", &temp) != EOF)
     {
-        (*texels)[idx++] = temp;
+        if(idx%3==0)
+        {
+            tempr = temp;
+        }
+        else if(idx%3==1)
+        {
+            tempg = temp;
+        }
+        else
+        {
+            tempb = temp;
+            (*texels)[idx/3] = ATColor(255, tempr, tempg, tempb);
+        }
+        idx++;
     }
     
-//    *texels = texs;
-    
-    cout << "width" << (*width) << endl;
-    cout << "height" << (*height) << endl;
-    cout << "maxNumber" << (*maxNumber) << endl;
+
     // terminate
     fclose (file);
     
 }
 
-
-void readInBMPtexture(string filename, int* width, int* height, int* maxNumber, int** texels)
-{
-    
-}
 
 int main (int argc, const char * argv[])
 {
@@ -106,11 +114,16 @@ int main (int argc, const char * argv[])
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(scene.width, scene.height);
     glutCreateWindow("ATShader");
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    
     
     glutIdleFunc(IdleFunction);
     glutDisplayFunc(ApplicationDisplay);
-    
+
     
     
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -154,6 +167,7 @@ int main (int argc, const char * argv[])
     {
         printf("NO ERRORS IN FRAGMENT SHADER\n\n");
     }
+
     
     program = glCreateProgram();
     glAttachShader(program, vertexShader);
@@ -162,6 +176,9 @@ int main (int argc, const char * argv[])
     glBindAttribLocation(program, 0, "position");
     glBindAttribLocation(program, 1, "normal");
     glBindAttribLocation(program, 2, "texture");
+
+    
+    glGenTextures(1, &textureID);
     
     glLinkProgram(program);
     
@@ -196,7 +213,6 @@ int main (int argc, const char * argv[])
  */
 void IdleFunction(void)
 {
-    glutPostRedisplay();
 }
 
 /**
@@ -204,11 +220,10 @@ void IdleFunction(void)
  */
 void ApplicationDisplay(void)
 {
-    static float rotater = 0.0f;
-    rotater+=0.1f;
     // setup variables for vertex and fragment shaders
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     
     // get projection matrix
     projectionMatrix = scene.perspective;
@@ -231,7 +246,7 @@ void ApplicationDisplay(void)
     // draw every object in the scene
     for(unsigned int objIdx=0; objIdx < scene.getObjects().size(); objIdx++)
     {
-        ATTriangleGroup& thisObject = scene.getObjects()[objIdx];
+        ATTriangleGroup &thisObject = scene.getObjects()[objIdx];
         
         // get modelview matrix
         modelViewMatrix = scene.getObjects()[objIdx].modelView;
@@ -242,63 +257,51 @@ void ApplicationDisplay(void)
 
         if(thisObject.textured)
         {
-            glDisable(GL_BLEND);
-            glEnable(GL_DEPTH_TEST);
-            
-            
-            glEnable(GL_TEXTURE_2D);
             
             // debug - turn on green in case texture is not loaded
             glUniform4f(glGetUniformLocation(program, "color"),0.0f, 1.0f, 0.0f, 0.0f);
             
+
+
             int width, height, maxNumber;
-            int* texels;
+            ATColor *texels;
+        
             readInPPMtexture((*thisObject.textureMap), &width, &height, &maxNumber, &texels);
-            
-            GLuint textureID = 3;
+
             glGenTextures(1, &textureID);
             glBindTexture(GL_TEXTURE_2D, textureID);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); 
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
             
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_INT, texels);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texels);
             
-            glUniform1i(glGetUniformLocation(program, "textureMap"), textureID);
+            delete [] texels;
         }
         else
         {
             // get object color
             ATColor col = scene.getObjects()[objIdx].materialColor;
             glUniform4f(glGetUniformLocation(program, "color"), col.getredF(), col.getgreenF(), col.getblueF(), col.getalphaF());
-
-            // if alpha is less than one, blend with whats in the raster, otherwise turn on depth buffer
-            if(col.getalphaF()<1.0f)
-            {
-                glDisable(GL_DEPTH_TEST);
-                glEnable(GL_BLEND); 
-            }
-            else
-            {
-                glDisable(GL_BLEND);
-                glEnable(GL_DEPTH_TEST);
-            }
         }
         
         // get specular color and shininess
         glUniform1f(glGetUniformLocation(program, "shininess"), scene.getObjects()[objIdx].shininess);
         ATColor specColor = scene.getObjects()[objIdx].specularColor;
         glUniform4f(glGetUniformLocation(program, "specularColor"), specColor.getredF(), specColor.getgreenF(), specColor.getblueF(), specColor.getalphaF());
-        
-        float geometry[12*thisObject.triangles.size()];
+        long trianglesize = thisObject.triangles.size();
+        float geometry[12*trianglesize];
         int idx = 0;
         
-        float normals[9*thisObject.triangles.size()];
+        float normals[9*trianglesize];
         int nidx = 0;
         
-        float textures[6*thisObject.triangles.size()];
+        float textures[6*trianglesize];
         int tidx = 0;
         
-        for(unsigned int i=0; i< thisObject.triangles.size(); i++)
+        for(unsigned int i=0; i< trianglesize; i++)
         {
             geometry[idx++]  = thisObject.triangles[i].vertA.getX();
             geometry[idx++]  = thisObject.triangles[i].vertA.getY();
@@ -355,7 +358,14 @@ void ApplicationDisplay(void)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textures);
         glEnableVertexAttribArray(2);
         
-        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*thisObject.triangles.size()));
+        // activate the texture
+        if(thisObject.textured)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glUniform1i(glGetUniformLocation(program, "textureMap"), 0);
+        }
+        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(3*trianglesize));
         
         
     }

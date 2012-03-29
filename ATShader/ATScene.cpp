@@ -818,9 +818,6 @@ void ATScene::sceneReaderPhong(char* filename)
     //	}
     
     
-	cout << "writing to raster" << endl;
-    
-    
     /* DO THIS IN OPEN GL*/
     
     //	// create the raster
@@ -832,6 +829,6 @@ void ATScene::sceneReaderPhong(char* filename)
     //	ATRaster3D::ATSaveToBMP(raster.getPixels(), raster.getWidth(), raster.getHeight(), (char*)"scene.bmp");
     
     
-	cout << "Excellent work my friend!\nData has been saved and written to scene.ppm and scene.bmp!\n";
+	cout << "Excellent work my friend!\nData has been read in!\n";
     
 }
