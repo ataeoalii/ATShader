@@ -256,6 +256,14 @@ void KeyboardFunc(unsigned char key, int x, int y)
             projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(0.0f, 1.0f, 0.0f, 1.0f)));
             break;
             
+        case 'u':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(1.0f, 0.0f, 0.0f, 1.0f)));
+            break;
+            
+        case 'o':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(1.0f, 0.0f, 0.0f, 1.0f)));
+            break;
+            
         default:
             cout << key << endl;
             cout << "key" << endl;
