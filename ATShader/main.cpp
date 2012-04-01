@@ -19,6 +19,7 @@
 #include "ATMatrix4.h"
 #include "ATVector4D.h"
 #include "ATScene.h"
+#include <math.h>
 
 const char* FPREFIX = "../../../../../";
 
@@ -35,7 +36,7 @@ ATMatrix4 projectionMatrix;
 ATScene scene;
 GLuint textureID;
 
-
+void KeyboardFunc(unsigned char key, int x, int y);
 void readInPPMtexture(string filename, int* width, int* height, int* maxNumber, ATColor** texels);
 
 
@@ -94,6 +95,9 @@ int main (int argc, const char * argv[])
     // read in scene file
     scene.sceneReaderPhong(filename);
     
+    // get projection matrix
+    projectionMatrix = scene.perspective;
+    
     ifstream vertexShaderFile("../../../../../ATShader/ATVertexShader.sdr");
 	printf("Reading in file ATVertexShader.sdr\n");
     
@@ -119,11 +123,12 @@ int main (int argc, const char * argv[])
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
-    
+
     
     glutIdleFunc(IdleFunction);
     glutDisplayFunc(ApplicationDisplay);
 
+    glutKeyboardFunc(KeyboardFunc);
     
     
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -213,6 +218,52 @@ int main (int argc, const char * argv[])
  */
 void IdleFunction(void)
 {
+    glutPostRedisplay();
+}
+
+void KeyboardFunc(unsigned char key, int x, int y)
+{
+    switch (key) {
+        case 'a':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkTranslateMatrix(-0.1f, 0.0f, 0.0f));
+            break;
+            
+        case 'w':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkTranslateMatrix(0.0f, 0.1f, 0.0f));
+            break;
+            
+        case 's':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkTranslateMatrix(0.0f, -0.1f, 0.0f));
+            break;
+            
+        case 'd':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkTranslateMatrix(0.1f, 0.0f, 0.0f));
+            break;
+            
+        case 'j':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(0.0f, 0.0f, 1.0f, 1.0f)));
+            break;
+            
+        case 'l':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(0.0f, 0.0f, 1.0f, 1.0f)));
+            break;
+            
+        case 'i':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(0.0f, 1.0f, 0.0f, 1.0f)));
+            break;
+            
+        case 'k':
+            projectionMatrix = ATMatrix4::ConcatMatrices(projectionMatrix, ATMatrix4::MkRotateMatrix(0.1f, ATVector4D(0.0f, 1.0f, 0.0f, 1.0f)));
+            break;
+            
+        default:
+            cout << key << endl;
+            cout << "key" << endl;
+            break;
+    }
+
+        
+
 }
 
 /**
@@ -223,10 +274,10 @@ void ApplicationDisplay(void)
     // setup variables for vertex and fragment shaders
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    static float phase = 0.01f;
+    phase+=0.01f;
     
-    
-    // get projection matrix
-    projectionMatrix = scene.perspective;
+
     
     glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, (GLfloat*)&projectionMatrix);
     
